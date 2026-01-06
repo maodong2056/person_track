@@ -1,0 +1,1 @@
+from .blaze_hand_detection import HandDetection as BlazePlamHandDetModel #

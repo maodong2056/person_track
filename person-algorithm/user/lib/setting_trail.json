@@ -1,0 +1,120 @@
+{
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "save_setting": {
+    "isSave_log": true,
+    "log_save": "user/log/",
+    "isSave_video": true,
+    "video_save": "user/output/"
+  },
+  "deepModel": {
+    "deepDetection": {
+      "structure": {
+        "cls_num": 1,
+        "num_layers": 0,
+        "heads": "{'hm': 1, 'wh': 2,'id':128,'reg': 2,'fhm': 1, 'fwh': 2, 'flm': 10, 'freg': 2,'tag': 2}",
+        "down_ratio": 4,
+        "head_conv": 64,
+        "state": 0
+      },
+      "parameters": {
+        "detection_face_thres": 0.2,
+        "detection_body_thres": 0.2,
+        "iou_thres": 0.4,
+        "tag_thres": 0.5,
+        "Knum": 100
+      },
+      "model": "../user/model/mobilex_reid_error_img.pth"
+    },
+    "deepDetectionLite": {
+      "structure": {
+        "cls_num": 1,
+        "num_layers": 0,
+        "heads": "{'hm': 1, 'wh': 2,'id':128,'reg': 2,'fhm': 1, 'fwh': 2, 'flm': 10, 'freg': 2,'tag': 2}",
+        "down_ratio": 8,
+        "head_conv": 64,
+        "state": 1
+      },
+      "parameters": {
+        "detection_face_thres": 0.5,
+        "detection_body_thres": 0.5,
+        "iou_thres": 0.4,
+        "tag_thres": 0.5,
+        "Knum": 100
+      },
+      "model": "../user/model/model_det8ratio.pth"
+    },
+    "deepFaceRec": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/face_arcface_r50_glinasia_emore_71.28.onnx"
+    },
+    "deepReidRec": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/model_reid_pcb2_1028_video.pth.tar"
+    },
+    "deepKeypoint": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/simdr_slim_ep200.pth"
+    },
+    "deep3dRootNet": {
+      "structure": {"focal":  [300, 300],
+                    "princpt":  [640, 360]
+      },
+      "parameters": {},
+      "model": "../user/model/snapshot_3droot_net.pth"
+    },
+
+    "deep3DKeypoint_deeboot": {
+      "structure": {"joint_num": 18,
+                    "focal":  [300, 300],
+                    "princpt":  [640, 320],
+                    "bbox_3d_shape": [2000, 2000, 2000]
+                    },
+      "parameters": {},
+      "model": "../user/model/snapshot_159.pth.tar"
+    },
+
+    "deep3DKeypoint": {
+      "structure": {"joint_num": 18,
+                    "focal":  [750, 750],
+                    "princpt":  [320, 240],
+                    "bbox_3d_shape": [2000, 2000, 2000]
+                    },
+      "parameters": {},
+      "model": "../user/model/snapshot_209_new_mixdata.pth.tar"
+    },
+    "deep3DKeypointSkeleton": {
+      "structure": {"joint_num": 16,
+                    "focal":  [750, 750],
+                    "princpt":  [320, 240],
+                    "dim_model": 64,
+                    "n_layer": 2,
+                    "n_head": 4
+                    },
+      "parameters": {},
+      "model": "../user/model/graformer_lite_head4_layer2_dim64_hm36_unity_ep75_tot41.8.tar"
+    }
+  },
+
+
+  "module":{
+    "match": {
+      "use_mutiMatch": true,
+      "face_thres": 0.6,
+      "reid_thres": 0.8
+    },
+    "track": {},
+    "traceFilter": {},
+    "objectTrack": {
+      "gate_threshold": 0.23,
+      "init_feature_budget": 3,
+      "sum_det_count": 20,
+      "max_history_id_lenth": 10
+    }
+  }
+}

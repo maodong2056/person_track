@@ -1,0 +1,14 @@
+{
+  "name" : "deep_sort",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {"max_dist": 0.2,
+                "single_mode": false,
+                "min_confidence": 0.3,
+                "nms_max_overlap": 0.5,
+                "nn_budget": 100},
+  "parameters": {},
+  "model_dir": ""
+}

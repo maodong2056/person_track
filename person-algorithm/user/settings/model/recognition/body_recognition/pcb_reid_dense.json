@@ -1,0 +1,10 @@
+{
+  "name" : "pcb_reid_dense",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {},
+  "parameters": {},
+  "model_dir": "user/model/recognition/body_reconition/body_aug_triple_fm17_model.pth"
+}

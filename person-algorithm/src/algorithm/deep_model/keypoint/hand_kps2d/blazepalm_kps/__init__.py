@@ -1,0 +1,2 @@
+
+from .blaze_hand_landmarks import HandLandmarks as BlazePlamHandKpsModel

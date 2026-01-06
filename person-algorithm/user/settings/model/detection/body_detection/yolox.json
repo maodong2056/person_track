@@ -1,0 +1,21 @@
+{
+  "name" : "yolox",
+  "model_dir": "user/model/detection/body_detection/Yolox_det_dance_fm.pth.tar",
+  "structure": {
+    "in_channels": [256, 512, 1024],
+    "depth": 0.33,
+    "width": 0.375,
+    "num_classes": 1,
+    "rgb_means": [0.485, 0.456, 0.406],
+    "std": [0.229, 0.224, 0.225],
+    "input_shape": [384, 512]
+  },
+  "parameters": {
+    "detection_body_thres": 0.1,
+    "nms_thres": 0.5
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  }
+}

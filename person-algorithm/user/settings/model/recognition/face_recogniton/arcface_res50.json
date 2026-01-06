@@ -1,0 +1,10 @@
+{
+  "name" : "arcface_res",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {},
+  "parameters": {},
+  "model": "user/model/recognition/face_recontion/face_arcface_r50_glinasia_emore_71.28.onnx"
+}

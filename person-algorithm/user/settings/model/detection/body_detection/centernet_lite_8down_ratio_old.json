@@ -1,0 +1,24 @@
+{
+  "name" : "centernet",
+  "model_dir": "user/model/detection/body_detection/centernet_new_20230320.pth",
+  "structure": {
+    "cls_num": 1,
+    "num_layers": 0,
+    "heads": "{'hm': 1, 'wh': 2,'id':128,'reg': 2,'fhm': 1, 'fwh': 2, 'flm': 10, 'freg': 2,'tag': 2}",
+    "down_ratio": 8,
+    "head_conv": 64,
+    "state": 1
+  },
+  "parameters": {
+    "detection_face_thres": 0.3,
+    "detection_body_thres": 0.35,
+    "iou_thres": 0.4,
+    "tag_thres": 0.5,
+    "Knum": 100,
+    "state": 0
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  }
+}

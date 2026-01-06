@@ -1,0 +1,15 @@
+{
+  "name" : "blazepalm_det",
+  "model_dir": "user/model/detection/hand_detection/blazepalm_detection_256.pth",
+  "structure": {
+    "model_img_size": 256,
+    "anchor_path": "user/model/detection/hand_detection/anchors_256.npy"
+  },
+  "parameters": {
+    "detection_hand_thres": 0.7
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  }
+}

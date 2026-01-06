@@ -1,0 +1,14 @@
+{
+  "name" : "blazepalm_kps",
+  "model_dir": "user/model/keypoint/hand_kps2d/blazepalm_detection_256.pth",
+  "structure": {
+    "model_img_size": 256
+  },
+  "parameters": {
+    "keypoint_hand_thres": 0.3
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  }
+}

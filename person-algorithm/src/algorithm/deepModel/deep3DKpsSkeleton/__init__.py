@@ -1,0 +1,1 @@
+from .deep_3dkp_skeleton_model import Deep3DKPSkeleModel

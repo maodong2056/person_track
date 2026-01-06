@@ -1,0 +1,14 @@
+{
+  "name" : "arcface_mobilefacenet",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {
+    "embedding_size" : 512,
+    "out_h" : 7,
+    "out_w" : 7
+  },
+  "parameters": {},
+  "model_dir": "user/model/recognition/face_recontion/mobilefacenet_emore5fam_Epoch_5_batch_167.pth"
+}

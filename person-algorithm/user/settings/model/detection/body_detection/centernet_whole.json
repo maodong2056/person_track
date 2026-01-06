@@ -1,0 +1,23 @@
+{
+  "name" : "centernet_whole",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {
+    "cls_num": 1,
+    "num_layers": 0,
+    "heads": "{'hm': 4, 'wh': 8,'id':128,'reg': 8, 'flm': 10, 'lhlm': 8,'rhlm': 8, 'tag': 4}",
+    "down_ratio": 4,
+    "head_conv": 64,
+    "state": 2
+  },
+  "parameters": {
+    "detection_face_thres": 0.3,
+    "detection_body_thres": 0.4,
+    "iou_thres": 0.4,
+    "tag_thres": 0.5,
+    "Knum": 100
+  },
+  "model_dir": "user/model/detection/body_detection/mobilenetxnet_whole_ver5_ftlib2_ep200.pth"
+}

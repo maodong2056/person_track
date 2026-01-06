@@ -1,0 +1,10 @@
+{
+  "name" : "arcface_resnet50",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {},
+  "parameters": {},
+  "model_dir": "user/model/recognition/face_recontion/arcface_resnet50_epoch_30.pth"
+}

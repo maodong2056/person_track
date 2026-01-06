@@ -1,0 +1,21 @@
+{
+  "name" : "pcb_reid_mobilev2",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {},
+  "parameters": {
+    "conform_int_max_number": 3,
+    "max_feature_bank": 4,
+    "reid_dim": 2560,
+    "occlude_iou_range": [0.18, 0.9],
+    "occ_feat_score": 0.1,
+    "glob_feat_score": 0.23,
+    "max_save_frame": 20,
+    "max_save_id": 20,
+    "max_lost_frame": 40,
+    "save_feat_score": 0.48
+  },
+  "model_dir": "user/model/recognition/body_reconition/mobilev2_qinbao_2780_nobottleneck.pth.tar"
+}

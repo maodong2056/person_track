@@ -1,0 +1,24 @@
+{
+  "name" : "centernet",
+  "model_dir": "user/model/detection/body_detection/hm_ce_debug_ep30.pth",
+  "structure": {
+    "cls_num": 1,
+    "num_layers": 0,
+    "heads": "{'hm': 2, 'tblr': 8, 'id':128, 'flm': 10,  'tag': 2}",
+    "down_ratio": 8,
+    "head_conv": 64,
+    "state": 1
+  },
+  "parameters": {
+    "detection_face_thres": 0.35,
+    "detection_body_thres": 0.35,
+    "iou_thres": 0.5,
+    "tag_thres": 0.5,
+    "Knum": 100,
+    "state": 0
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  }
+}

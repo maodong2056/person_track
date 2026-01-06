@@ -1,0 +1,9 @@
+{
+  "name" : "action_classify",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "parameters": {},
+  "model": "user/model/keypoint/kps3d/model_kpGraph_epoch210.pt"
+}

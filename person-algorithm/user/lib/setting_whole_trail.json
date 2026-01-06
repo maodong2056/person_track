@@ -1,0 +1,87 @@
+{
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "save_setting": {
+    "isSave_log": true,
+    "log_save": "user/log/",
+    "isSave_video": true,
+    "video_save": "user/output/"
+  },
+  "deepModel": {
+    "deepDetection": {
+      "structure": {
+        "cls_num": 1,
+        "num_layers": 0,
+        "heads": "{'hm': 4, 'wh': 8,'id':128,'reg': 8, 'flm': 10, 'lhlm': 8,'rhlm': 8, 'tag': 4}",
+        "down_ratio": 4,
+        "head_conv": 64
+      },
+      "parameters": {
+        "detection_face_thres": 0.5,
+        "detection_body_thres": 0.5,
+        "iou_thres": 0.4,
+        "tag_thres": 0.5,
+        "Knum": 100
+      },
+      "model": "../user/model/mobilenetxnet_whole_ver5_ftlib2_ep200.pth"
+    },
+    "deepDetectionOpenPose": {
+      "structure": {
+        "cls_num": 1,
+        "num_layers": 0,
+        "heads": "{'hm': 4, 'wh': 8,'id':128,'reg': 8, 'flm': 10, 'lhlm': 8,'rhlm': 8, 'tag': 6}",
+        "down_ratio": 4,
+        "head_conv": 64
+      },
+      "parameters": {
+        "detection_face_thres": 0.5,
+        "detection_body_thres": 0.5,
+        "iou_thres": 0.4,
+        "tag_thres": 0.5,
+        "Knum": 100
+      },
+      "model": "../user/model/model_105.pth"
+    },
+    "deepFaceRec": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/face_arcface_r50_glinasia_emore_71.28.onnx"
+    },
+    "deepReidRec": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/model_reid_pcb2_1028.pth.tar"
+    },
+    "deepKeypoint": {
+      "structure": {},
+      "parameters": {},
+      "model": "../user/model/simdr_slim_ep200.pth"
+    },
+    "deep3DKeypoint": {
+      "structure": {"joint_num": 18,
+                    "focal":  [750, 750],
+                    "princpt":  [320, 240],
+                    "bbox_3d_shape": [2000, 2000, 2000]
+                    },
+      "parameters": {},
+      "model": "../user/model/snapshot_159.pth.tar"
+    }
+  },
+  "module":{
+    "match": {
+      "use_mutiMatch": true,
+      "face_thres": 0.6,
+      "reid_thres": 0.8
+    },
+    "track": {},
+    "traceFilter": {},
+    "objectTrack": {
+      "gate_threshold": 0.35,
+      "init_feature_budget": 2,
+      "sum_det_count": 20,
+      "max_history_id_lenth": 10
+    }
+  }
+}

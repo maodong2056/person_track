@@ -1,0 +1,12 @@
+{
+  "name" : "rootnet",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {"focal":  [300, 300],
+                "princpt":  [640, 360]
+  },
+  "parameters": {},
+  "model": "user/model/keypoint/kps3d/snapshot_3droot_net.pth"
+}

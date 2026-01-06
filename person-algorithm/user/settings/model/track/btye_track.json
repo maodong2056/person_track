@@ -1,0 +1,10 @@
+{
+  "name" : "byte_track",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {"frame_rate": 20},
+  "parameters": {},
+  "model_dir": ""
+}

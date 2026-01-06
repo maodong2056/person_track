@@ -1,0 +1,55 @@
+{
+  "logLevel" : "DEBUG",
+  "image_dir": "../user/lib/persons",
+  "user_json": "../user/lib/persons.json",
+  "setting_json": "../user/lib/setting.json",
+  "video_width": 1280,
+  "video_height": 720,
+  "video_fps": 30,
+  "default_user": {
+      "person_name": "无名氏",
+      "person_photo": "gui/resource/Unknown/Unknown.png",
+      "person_face_photo": "gui/resource/Unknown/Unknown.png",
+      "person_detection_photo": "gui/resource/Unknown/Unknown.png",
+      "person_sex": "男",
+      "person_age": 0,
+      "person_hair": "短发",
+      "person_color": [255, 255, 255]
+  },
+  "default_setting" : {
+    "model_setting": {
+      "detection_model": "../user/model/detection.pth",
+      "reid_model": "../user/model/reid.pth",
+      "face_model": "../user/model/face.pth"
+    },
+    "detection_structure": {
+      "cls_num": 1,
+      "num_layers": 0,
+      "heads": "{'hm': 1, 'wh': 2, 'id': 128, 'reg': 2,'fhm': 1, 'fwh': 2, 'flm': 10, 'freg': 2,'tag': 2}",
+      "down_ratio": 8,
+      "head_conv": 256
+    },
+      "detection_setting": {
+      "detection_face_thres": 0.5,
+      "detection_body_thres": 0.5,
+      "iou_thres": 0.5,
+      "tag_thres": 0.5,
+      "Knum": 1
+    },
+    "match_setting": {
+      "use_mutiMatch": true,
+      "face_thres": 0.6,
+      "reid_thres": 0.8
+    },
+    "gpu_setting": {
+      "is_useGpu": true,
+      "gpu_num": 0
+    },
+    "save_setting": {
+      "isSave_log": true,
+      "log_save": "../user/log/",
+      "isSave_video": true,
+      "video_save": "../user/output/"
+    }
+  }
+}

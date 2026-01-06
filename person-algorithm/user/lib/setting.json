@@ -1,0 +1,36 @@
+{
+  "model_setting": {
+    "detection_model": "C:/Users/Administrator.DESKTOP-8KBOSLB/Desktop/reid_demo/user/model/det_baseline_cw2mix2cw2famfor40_ep20_save.pth",
+    "reid_model": "C:/Users/Administrator.DESKTOP-8KBOSLB/Desktop/reid_demo/user/model/body_aug_triple_fm17_model.pth",
+    "face_model": "C:/Users/Administrator.DESKTOP-8KBOSLB/Desktop/reid_demo/user/model/face_arcface_r50_glinasia_emore_71.28.onnx"
+  },
+  "detection_structure": {
+    "cls_num": 1,
+    "num_layers": 0,
+    "heads": "{'hm': 1, 'wh': 2,'id':128,'reg': 2,'fhm': 1, 'fwh': 2, 'flm': 10, 'freg': 2,'tag': 2}",
+    "down_ratio": 4,
+    "head_conv": 64
+  },
+  "detection_setting": {
+    "detection_face_thres": 0.3,
+    "detection_body_thres": 0.4,
+    "iou_thres": 0.4,
+    "tag_thres": 0.5,
+    "Knum": 100
+  },
+  "match_setting": {
+    "use_mutiMatch": true,
+    "face_thres": 0.6,
+    "reid_thres": 0.8
+  },
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "save_setting": {
+    "isSave_log": true,
+    "log_save": "user/log/",
+    "isSave_video": true,
+    "video_save": "user/output/"
+  }
+}

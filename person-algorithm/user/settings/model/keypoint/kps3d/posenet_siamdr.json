@@ -1,0 +1,14 @@
+{
+  "name" : "posenet_siamdr",
+  "gpu_setting": {
+    "is_useGpu": true,
+    "gpu_num": 0
+  },
+  "structure": {"joint_num": 18,
+                "focal":  [750, 750],
+                "princpt":  [320, 240],
+                "bbox_3d_shape": [2000, 2000, 2000]
+                },
+  "parameters": {},
+  "model": "user/model/keypoint/kps3d/snapshot_159.pth.tar"
+}
