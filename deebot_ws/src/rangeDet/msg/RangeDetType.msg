@@ -1,0 +1,6 @@
+# type enum
+uint8 RANGE_TYPE_FRONT_BUFFER = 0
+uint8 RANGE_TYPE_SIDE_IN = 1
+uint8 RANGE_TYPE_DOWN_IN = 2
+uint8 RANGE_TYPE_ULTRASOUND = 3
+uint8 type    # RANGE_TYPE

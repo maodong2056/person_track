@@ -1,0 +1,19 @@
+docker run -it  \
+       --runtime=nvidia \
+       --gpus all \
+       --network host \
+       -v /home/xiaolin-li/anaconda3:/home/xiaolin-li/anaconda3 \
+       -v /home/xiaolin-li/.conda:/root/.conda \
+       -v ~/docker_work:/docker_work \
+       -e DISPLAY=$DISPLAY \
+       -v /tmp/.X11-unix:/tmp/.X11-unix \
+       --name ubuntu20_gpu \
+       ubuntu:20.04
+
+# 安装nvidia-container-toolkit
+#https://docs.nvidia.com/datacenter/cloud-native/container-toolkit/latest/install-guide.html#installing-with-yum-or-dnf
+
+wget http://fishros.com/install -O fishros && . fishros
+
+apt update
+apt install wget libxml2 gcc
