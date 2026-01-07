@@ -1,143 +1,125 @@
+import argparse
+import time
+from dataclasses import dataclass
+
 import cv2
+import rospy
+
 from src import Video
-from src.utils import PartName, KeyPointType
-from src.algorithm.api import PersonDetection
-from src.algorithm.api import PersonMutiTrack
+from src.utils import PartName
+from src.algorithm.api import PersonDetection, PersonMutiTrack
 from src.algorithm.api import PersonFollow, PersonTrackerState
 from src.algorithm.api.person_follow.person_item_track import PersonFollowItem
-from src.utils import draw_person_bbox, draw_keypoints, draw_keypoints_3d
-from glob import glob
-import os
-from mmcv.cnn import get_model_complexity_info
-# //mobilev2_reid_qinbao_2563_20220708.pth.tar
-# //reid_model_merge_last_2430
-# person_det = PersonDetection("user/settings/model/detection/body_detection/centernet_lite_8down_ratio.json")
+from src.utils import draw_person_bbox
+from prediction.msg import Pose as FollowPose
+
+
+@dataclass
+class FollowConfig:
+    min_ratio: float = 0.05
+    max_ratio: float = 0.8
+
+
 person_det = PersonDetection("user/settings/model/detection/body_detection/centernet_lite_8down_ratio_old.json")
 person_track = PersonMutiTrack("user/settings/model/track/deep_sort.json")
-person_follow = PersonFollow("user/settings/model/recognition/body_recognition/pcb_reid_mobilev2.json",
-                             person_item=PersonFollowItem)
-# create video fourcc#######################################################################
+person_follow = PersonFollow(
+    "user/settings/model/recognition/body_recognition/pcb_reid_mobilev2.json",
+    person_item=PersonFollowItem,
+)
 
 
+def build_target_from_bbox(bbox, image_shape, config: FollowConfig):
+    x1, y1, x2, y2 = bbox
+    image_h, image_w = image_shape[:2]
+    cx = (x1 + x2) / 2.0
+    bbox_h = max(y2 - y1, 1.0)
+
+    ratio = bbox_h / max(image_h, 1.0)
+    ratio = min(max(ratio, config.min_ratio), config.max_ratio)
+
+    offset = (cx - image_w / 2.0) / (image_w / 2.0)
+    offset = min(max(offset, -1.0), 1.0)
+    return float(ratio), float(offset)
 
 
-def get_img(img_path = 't10img/',img_type ='*.jp*' ):
-    images = glob(os.path.join(img_path,img_type))
-    # images.sort()
-
-    # images.sort(key=lambda x: int(x.split('/')[-1].split('\\')[-1].split('.')[0]))
-    images.sort(key=lambda x: int(x.split('\\')[-1].split('_')[-1].split('.')[0])) # haitao
-    # images.sort(key=lambda x: int(x.split('\\')[-1].split('_')[-1].split('.')[0]))  # haitao
-    # images.sort(key=lambda x: int(x.split('\\')[-1].split('.')[0]))  # haitao
-    for img in images:
-        yield img
-#input_video = r"D:\share\dataset\test_dataset\跟随视频\gj3.mp4"
-# input_video = r"D:\person-algorithm-package\\2.0_video/20201210160251-1-1-1.avi"
-# camera_mode = False
-input_video = r"D:\person-algorithm-package\2.0_video\qinbao\init.mp4"
-# input_video = r"D:\person-algorithm-package\2.0_video\4.mp4"
-# input_video = r"2022-1-18/video/3.MOV"as
-camera_mode = True
-fps = 15
-size = (1280, 960)
-my_video = Video(camera_mode,0,video_width=1280, video_height=960)
-############################################################################################
-video_name = "test/dibao.avi"
-fourcc = cv2.VideoWriter_fourcc(*'mjpg')
-
-raw_video_writer = cv2.VideoWriter(video_name, fourcc, fps, size)
-tracking_state = PersonTrackerState.Uninit
-
-ret = True
-count = 1
-# D:\person-algorithm-package\2022-1-18\20_video_0707\pic_0615
-for file in get_img(r'D:\project\deebot_tracking_demo\data\autostart\image\2/'):
-# for file in get_img(r'D:\person-algorithm-package\2022-1-18\20220401\eg.1'):
-# for file in get_img(r'D:\person-algorithm-package\2022-1-18\gj12'):
-# for file in get_img(r'D:\person-algorithm-package\2022-1-18\20_video_0707\new_camera_img\2023_02_10_15_01_52_619234'):
-# for file in get_img(r'D:\person-algorithm-package\2022-1-18\qinbao_1280_jpg'):
-#
-# while ret:
-# #
-#     ret, input_image = my_video.capOneFrame()
+def build_follow_pose(forward, lateral):
+    pose = FollowPose()
+    pose.header.stamp = rospy.Time.now()
+    pose.x = forward
+    pose.y = lateral
+    pose.theta = 0.0
+    return pose
 
 
-    # input_image = input_image[160:, 160:]
+def parse_args():
+    parser = argparse.ArgumentParser(description="Person follow tracking")
+    parser.add_argument("--camera-index", type=int, default=0)
+    parser.add_argument("--video", type=str, default="")
+    parser.add_argument("--camera", action="store_true")
+    parser.add_argument("--width", type=int, default=1280)
+    parser.add_argument("--height", type=int, default=960)
+    parser.add_argument("--show", action="store_true")
+    parser.add_argument("--ros", action="store_true")
+    return parser.parse_args()
 
 
-# # # #     print(count)
-#     input_image = cv2.resize(input_image, (1280, 720))
+def main():
+    args = parse_args()
+    config = FollowConfig()
 
-    # raw_video_writer.write(input_image)
-    tracking_target = None
-    print(count)
-    count +=1
-    input_image = cv2.imread(file)#
-    print(input_image.shape)
-    # input_image = cv2.cvtColor(input_image,cv2.COLOR_RGB2BGR)
+    if args.ros:
+        rospy.init_node("person_follow", anonymous=True)
+        target_pub = rospy.Publisher("/person_follow/target", FollowPose, queue_size=10)
+    else:
+        target_pub = None
 
-    # cv2.imwrite(r'D:\person-algorithm-package\2022-1-18\20_video_0707\jiao/'+str(count)+'.jpg',input_image)
-# while ret:
-#     ret, input_image = my_video.capOneFrame()
-#     if not ret:
-#         break
-    output = person_det.get_output(input_image)
-    input_image = draw_person_bbox(input_image, output)
-    output = person_track.get_output(input_image, output)
+    camera_mode = args.camera or not args.video
+    video_source = args.camera_index if camera_mode else args.video
+    video = Video(camera_mode, video_source, video_width=args.width, video_height=args.height)
 
+    tracking_state = PersonTrackerState.Uninit
+    ret = True
+    while ret:
+        ret, input_image = video.capOneFrame()
+        if not ret:
+            break
 
-    # if count ==45 or count ==83:
-    #     tracking_state = person_follow.reset_Tracker()
-    if len(output) >0:
-        if tracking_state == PersonTrackerState.Uninit:
-            if len(output)!=0:
+        tracking_target = None
+        output = person_det.get_output(input_image)
+        input_image = draw_person_bbox(input_image, output)
+        output = person_track.get_output(input_image, output)
+
+        if output:
+            if tracking_state == PersonTrackerState.Uninit:
                 track_ret = person_follow.init_track(input_image, person_items=output)
-                # track_ret = person_follow.init_track_setinit_box(input_image, person_item=output[1])
-                # person_follow.Set_Templete_update_Frequence(15)
-                # person_follow.Set_reid_global_gate_thresh(0.182)
                 if track_ret:
-                    # person_follow.Set_update_Frame(20)
                     tracking_state = person_follow.get_state()
                     tracking_target = person_follow.get_tracking_person()
-                    input_image = draw_person_bbox(input_image, [tracking_target], draw_tracking=True, draw_conf=True)
-                    input_image = draw_person_bbox(input_image, output, draw_conf=True)
+            else:
+                tracking_state = person_follow.update_track(input_image, output)
+                tracking_target = person_follow.get_tracking_person()
+
+        if tracking_target is None:
+            person_follow.mark_nodetected()
         else:
-            tracking_state = person_follow.update_track(input_image, output)
-            tracking_target = person_follow.get_tracking_person()
+            bbox = tracking_target.get_box(PartName.body_part).tolist()
+            forward, lateral = build_target_from_bbox(bbox, input_image.shape, config)
+            if target_pub is not None:
+                target_pub.publish(build_follow_pose(forward, lateral))
             input_image = draw_person_bbox(input_image, [tracking_target], draw_tracking=True, draw_conf=True)
-            input_image = draw_person_bbox(input_image, output, draw_conf=True)
 
-    else:
-        person_follow.mark_nodetected()
+        if args.show:
+            cv2.imshow("follow", input_image)
+            if cv2.waitKey(1) == 27:
+                break
 
+        if args.ros and rospy.is_shutdown():
+            break
 
-
-    txt_name = '0720_txt/'
-    new_file = txt_name + '0720_txt' + '.txt'
-    f = open(new_file ,'a+')
-    if tracking_target is not  None:
-         res = tracking_target.get_box(PartName.body_part).tolist()
-         for i in res:
-            f.write(str(i) + ' ')
-         f.write('\n')
-    else:
-        f.write('-1')
-        f.write('\n')
-    # f.close()
-
-    cv2.putText(input_image,str(count), (20,20), cv2.FONT_HERSHEY_SIMPLEX,
-    0.7,(255,255,255), 1, cv2.LINE_AA)
-    input_image = cv2.resize(input_image, (1280, 960))
-    #
-    # cv2.rectangle(input_image, ( 302,  2), ( 799, 957),
-    #               (255, 0, 0), 2)
+    if args.show:
+        cv2.destroyAllWindows()
+    time.sleep(0.1)
 
 
-    raw_video_writer.write(input_image)
-    cv2.imshow("im", input_image)
-    cv2.waitKey(1)
-    # print(1)
-# f.close()
-
-
-
+if __name__ == "__main__":
+    main()
