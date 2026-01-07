@@ -1,10 +1,8 @@
 import argparse
-import math
 import time
 from dataclasses import dataclass
 
 import cv2
-import numpy as np
 import rospy
 
 from src import Video
@@ -17,19 +15,9 @@ from prediction.msg import Pose as FollowPose
 
 
 @dataclass
-class CameraModel:
-    fx: float
-    fy: float
-    cx: float
-    cy: float
-    person_height_m: float = 1.7
-    desired_distance_m: float = 0.9
-    max_forward_m: float = 0.7
-    max_back_m: float = 0.4
-    max_lateral_m: float = 0.4
-    min_bbox_px: float = 20.0
-    min_distance_m: float = 0.3
-    max_distance_m: float = 3.5
+class FollowConfig:
+    min_ratio: float = 0.05
+    max_ratio: float = 0.8
 
 
 person_det = PersonDetection("user/settings/model/detection/body_detection/centernet_lite_8down_ratio_old.json")
@@ -40,19 +28,18 @@ person_follow = PersonFollow(
 )
 
 
-def build_target_from_bbox(bbox, camera: CameraModel):
+def build_target_from_bbox(bbox, image_shape, config: FollowConfig):
     x1, y1, x2, y2 = bbox
+    image_h, image_w = image_shape[:2]
     cx = (x1 + x2) / 2.0
-    bbox_h = max(y2 - y1, camera.min_bbox_px)
+    bbox_h = max(y2 - y1, 1.0)
 
-    distance_m = camera.person_height_m * camera.fy / bbox_h
-    distance_m = float(np.clip(distance_m, camera.min_distance_m, camera.max_distance_m))
-    lateral_m = (cx - camera.cx) * distance_m / camera.fx
-    lateral_m = float(np.clip(lateral_m, -camera.max_lateral_m, camera.max_lateral_m))
+    ratio = bbox_h / max(image_h, 1.0)
+    ratio = min(max(ratio, config.min_ratio), config.max_ratio)
 
-    forward_error = distance_m - camera.desired_distance_m
-    forward_m = float(np.clip(forward_error, -camera.max_back_m, camera.max_forward_m))
-    return forward_m, -lateral_m
+    offset = (cx - image_w / 2.0) / (image_w / 2.0)
+    offset = min(max(offset, -1.0), 1.0)
+    return float(ratio), float(offset)
 
 
 def build_follow_pose(forward, lateral):
@@ -60,26 +47,8 @@ def build_follow_pose(forward, lateral):
     pose.header.stamp = rospy.Time.now()
     pose.x = forward
     pose.y = lateral
-    pose.theta = math.atan2(lateral, max(forward, 1e-3))
+    pose.theta = 0.0
     return pose
-
-
-def build_camera_model(args):
-    fx = args.fx if args.fx > 0 else args.width * 0.6
-    fy = args.fy if args.fy > 0 else args.height * 0.6
-    cx = args.cx if args.cx > 0 else args.width / 2.0
-    cy = args.cy if args.cy > 0 else args.height / 2.0
-    return CameraModel(
-        fx=fx,
-        fy=fy,
-        cx=cx,
-        cy=cy,
-        person_height_m=args.person_height,
-        desired_distance_m=args.desired_distance,
-        max_forward_m=args.max_forward,
-        max_back_m=args.max_back,
-        max_lateral_m=args.max_lateral,
-    )
 
 
 def parse_args():
@@ -89,15 +58,6 @@ def parse_args():
     parser.add_argument("--camera", action="store_true")
     parser.add_argument("--width", type=int, default=1280)
     parser.add_argument("--height", type=int, default=960)
-    parser.add_argument("--fx", type=float, default=0.0)
-    parser.add_argument("--fy", type=float, default=0.0)
-    parser.add_argument("--cx", type=float, default=0.0)
-    parser.add_argument("--cy", type=float, default=0.0)
-    parser.add_argument("--person-height", type=float, default=1.7)
-    parser.add_argument("--desired-distance", type=float, default=0.9)
-    parser.add_argument("--max-forward", type=float, default=0.7)
-    parser.add_argument("--max-back", type=float, default=0.4)
-    parser.add_argument("--max-lateral", type=float, default=0.4)
     parser.add_argument("--show", action="store_true")
     parser.add_argument("--ros", action="store_true")
     return parser.parse_args()
@@ -105,6 +65,7 @@ def parse_args():
 
 def main():
     args = parse_args()
+    config = FollowConfig()
 
     if args.ros:
         rospy.init_node("person_follow", anonymous=True)
@@ -115,7 +76,6 @@ def main():
     camera_mode = args.camera or not args.video
     video_source = args.camera_index if camera_mode else args.video
     video = Video(camera_mode, video_source, video_width=args.width, video_height=args.height)
-    camera_model = build_camera_model(args)
 
     tracking_state = PersonTrackerState.Uninit
     ret = True
@@ -143,7 +103,7 @@ def main():
             person_follow.mark_nodetected()
         else:
             bbox = tracking_target.get_box(PartName.body_part).tolist()
-            forward, lateral = build_target_from_bbox(bbox, camera_model)
+            forward, lateral = build_target_from_bbox(bbox, input_image.shape, config)
             if target_pub is not None:
                 target_pub.publish(build_follow_pose(forward, lateral))
             input_image = draw_person_bbox(input_image, [tracking_target], draw_tracking=True, draw_conf=True)
